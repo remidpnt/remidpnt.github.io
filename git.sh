@@ -1,4 +1,4 @@
 git add .
 git commit -m "site update"
-git push
+git push -u origin master
 
