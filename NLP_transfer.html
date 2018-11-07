@@ -1,0 +1,272 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Shape &mdash; Free Website Template, Free HTML5 Template by FreeHTML5.co</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="Free HTML5 Website Template by FreeHTML5.co" />
+	<meta name="keywords" content="free website templates, free html5, free template, free bootstrap, free website template, html5, css3, mobile first, responsive" />
+	<meta name="author" content="FreeHTML5.co" />
+
+	<!--
+	//////////////////////////////////////////////////////
+
+	FREE HTML5 TEMPLATE
+	DESIGNED & DEVELOPED by FreeHTML5.co
+
+	Website: 		http://freehtml5.co/
+	Email: 			info@freehtml5.co
+	Twitter: 		http://twitter.com/fh5co
+	Facebook: 		https://www.facebook.com/fh5co
+
+	//////////////////////////////////////////////////////
+-->
+
+<!-- Facebook and Twitter integration -->
+<meta property="og:title" content=""/>
+<meta property="og:image" content=""/>
+<meta property="og:url" content=""/>
+<meta property="og:site_name" content=""/>
+<meta property="og:description" content=""/>
+<meta name="twitter:title" content="" />
+<meta name="twitter:image" content="" />
+<meta name="twitter:url" content="" />
+<meta name="twitter:card" content="" />
+
+<link href='https://fonts.googleapis.com/css?family=Work+Sans:400,300,600,400italic,700' rel='stylesheet' type='text/css'>
+
+<!-- Animate.css -->
+<link rel="stylesheet" href="css/animate.css">
+<!-- Icomoon Icon Fonts-->
+<link rel="stylesheet" href="css/icomoon.css">
+<!-- Bootstrap  -->
+<link rel="stylesheet" href="css/bootstrap.css">
+
+<!-- Magnific Popup -->
+<link rel="stylesheet" href="css/magnific-popup.css">
+
+<!-- Theme style  -->
+<link rel="stylesheet" href="css/style.css">
+
+<!-- Modernizr JS -->
+<script src="js/modernizr-2.6.2.min.js"></script>
+<!-- FOR IE9 below -->
+<!--[if lt IE 9]>
+<script src="js/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+	<div class="fh5co-loader"></div>
+
+	<div id="page">
+		<nav class="fh5co-nav" role="navigation">
+			<div class="container">
+				<div class="row">
+					<div class="col-xs-12 text-center">
+						<div id="fh5co-logo"><a href="index.html">Rémi Dupont<span>.</span></a></div>
+					</div>
+					<div class="col-xs-12 text-center menu-1">
+						<ul>
+							<li><a href="index.html">Home</a></li>
+							<li class="active"><a href="projects.html">Projects</a></li>
+							<li><a href="about.html">Personal experience</a></li>
+							<li><a href="contact.html">Contact</a></li>
+						</ul>
+					</div>
+				</div>
+
+			</div>
+		</nav>
+
+		<header id="fh5co-header" class="fh5co-cover" role="banner" style="background-image:url(images/img_bg_1.jpg);">
+			<div class="overlay"></div>
+			<div class="container">
+				<div class="row">
+					<div class="col-md-12 col-md-offset-0 text-center">
+						<div class="display-t">
+							<div class="display-tc animate-box" data-animate-effect="fadeInUp">
+								<h1 class="mb30">Transfer learning in natual language processing (NLP)</h1>
+								<p>The new state of the art for text classification (April 2018)</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</header>
+
+		<div id="fh5co-about">
+			<div class="container">
+				<div class="row row-pb-md">
+					<div class="col-md-8 col-md-offset-2 text-center fh5co-heading">
+						<span>Introduction</span>
+						<h2>A new state of the art:</h2>
+						<p>Transfer learning is definitly a new concept for NLP, and it should be done with caution.
+							In this blog post, we will investigate on the theorie behind it, and then train our own model from the wiki103 dataset</p>
+						</div>
+					</div>
+					<div class="row row-pb-md animate-box">
+						<div class="col-md-8 col-md-offset-2 text-center-block fh5co-heading">
+							<h3>General overview</h3>
+							<p class="text-justify">
+
+								Transfer Learning is a technique widely used in computer vision.
+								It constists in using a pretrained neural network on
+								a similar task, and then training the lasts layers on our final task.
+								For instance, we can use a convolutional neural network (Network A) trained to classify 1000
+								different type of images (cat, iris, aircraft, vehicules,...) and transfer some of his parameters to a network B,
+								order to train in a more specific task, such as iceberg recognition.
+
+								<a href="NLP_transfer.html"><img src="images/transfer.png" alt="Free HTML5 Website Template by FreeHTML5.co" class="img-responsive"></a>
+
+								<br>This technique makes a lot of sense:
+								even if the last layers are different from network A to network B,
+								it would be very useful for our network B to reuse
+								the first layers of network A to capture low level features
+								such as edges and basic shapes. We can keep the first layers of our network A
+								and train only the last fully connected layers in B, or even better use different
+								learning rate for every group of layer (Jeremy Howard, fastai).
+								<br>
+								So why don't researcher use to do the same with NLP models?
+								Bryan McCann,James Bradbury,Caiming Xiong and Richard Socher tried to use a pretrain
+								translations model in <a href="https://arxiv.org/pdf/1708.00107.pdf"> this paper:</a>
+								Hower, they didn't fine tune their model (unfreezing and using differents lr per parameters).
+								<br>
+								<br></p>
+								<h3>Unified language model fine tuning </h3>
+								<p class="text-justify">
+									I will base my work on <a href="https://arxiv.org/pdf/1801.06146.pdf"> this amazing paper</a>, by Jeremy Howard and Sebastian Ruder.
+									Both are great researchers, Jeremy made some very nice machine learning courses threw
+									<a href="https://www.fast.ai/"> fastai.</a> Sebastian Ruder study NLP
+									and <a href="http://ruder.io/"> his website </a> is very good to have an overview on NLP and deep learning in general.
+									Make sure to check it out if you are interested by these subjects. <br>
+									Transfer learning in NLP is more complex than in computer vision as we have to care about our embeddings, and how do we train our network on a new dataset.
+									We can split this task in 3 steeps: <br><br>
+									- Pretraining a AWD_LSTM model in a huge dataset such as wiki103 dataset (a).</br>
+									- Pretraining our previously pretrain model in our target dataset (b) <br>
+									- Training in our pretrain model on out target dataset and our target task (ie classification,..) (c) <br>
+									<br>
+
+									<a href="NLP_transfer.html"><img src="images/figA.png" alt="Free HTML5 Website Template by FreeHTML5.co" class="img-responsive"></a>
+								</p>
+								<br>On this blog post, I will implement the first part of this paper, pretraining a AWD_LSTM model in a huge dataset such as wiki103 dataset <br><br>
+								<h3>Language model pretraining </h3>
+								<h4>a) Our Language Model</h4>
+
+								We will use a 3 layers AWD-LSTM Network described in <a href="https://arxiv.org/pdf/1708.00107.pdf"> this paper </a>. AWD-LSTM give good results
+								when they are well used thanks to their regularisation in the weight matrix itself (DropConnect).
+								We will also use the same dropout mask within a forward pass (Variational dropout).
+								In a first time, I will not use any regularisation on the hidden states (Activation Regularization or Temporal Activation Regularization).
+								We will use a linear layer at the top of our LSTM on wich we will use a softmax in order to predict the next word indice.
+								Our embedding layer will be a vocab_size by word_embedding size embedding matrix, and we will share the weights between the embedding and softmax layer,
+								substantially reducing the total parameter count in the model ( <a href="https://arxiv.org/pdf/1608.05859.pdf"> Weight tying (Press & Wolf 2016) </a>)
+								<br>
+								<br>
+								<h4>b) How to pretrain our model ?</h4>
+								<p class="text-justify">
+									So, what do I mean when I say pretraining? What we want to do is to learn the general structure of our language.
+									For instance, it is more likely that a verb follows a name than a second verb.
+									We will also learn our embedding from scratch, using a 400 dimentions vector for each word.
+									To do this pretraining, we will train our language_model to predict each next word: <br>
+									Let's say I have a sentence in my corpus, "I love machine learning".
+									My first input at t=0 will be "I", and my language model will have to predict "love". At t=1, my inputs will be "love", and the LSTM have seen "I" before.
+									Our language model will have to predict "Machine". Training our model this way, we force our model to learn dependencies between words, and this is very convenient as we dont need any labeled data as input!
+									We keep iterating this way for BPTT words.
+									<br>
+									<br>
+									<h4>c) BPTT </h4>
+									<p class="text-justify">
+										BPTT stands for BackPropagation Thought Time. This is a number that will set the maximum timesteep on which we will backpropagate our gradient.
+										As always in machine learning, we will have to find out the good tradeoff:
+										A value too small will make it more difficult for our network to learn long-term depedencies, as we will to retro-propagate our gradient throught a lot of timesteeps.
+										On the other hand, a value that is too important will force our machine to store gradient for a lot of timesteep,
+										leading to more computation ans therefore a longer training time.
+										<p/>
+										<h3>Implementation</h3>
+										<p class="text-justify">
+											Now that we have a good understanding of our model, let's code it!<br/>
+											All my code is available on my github account
+										</p>
+										<h4>a) Wikitext103 dataset</h4>
+										<p class="text-justify">
+											Wikitext103 is a 28,475 wikipedia article dataset available <a href="https://einstein.ai/research/blog/the-wikitext-long-term-dependency-language-modeling-dataset">here</a>.
+											Here is an example of one article:
+											<br>
+											<br>
+											= Gold dollar =
+											<br/>
+											The gold dollar or gold one @-@ dollar piece was a coin struck as a regular issue by the United States Bureau of the Mint from 1849 to 1889 . The coin had three types over its lifetime , all designed by Mint Chief Engraver James B. Longacre . The Type 1 issue had the smallest diameter of any United States coin ever minted .
+											A gold dollar had been proposed several times in the 1830s and 1840s , but was not initially adopted . Congress was finally galvanized into action by the increased supply of bullion caused by the California gold rush , and in 1849 authorized a gold dollar . In its early years , silver coins were being hoarded or exported , and the gold dollar found a ready place in commerce . Silver again circulated after Congress in 1853 required that new coins of that metal be made lighter , and the gold dollar became a rarity in commerce even before federal coins vanished from circulation because of the economic disruption caused by the American Civil War .
+											Gold did not again circulate in most of the nation until 1879 ; once it did , the gold dollar did not regain its place . In its final years , it was struck in small numbers , causing speculation by hoarders . It was also in demand to be mounted in jewelry . The regular issue gold dollar was last struck in 1889 ; the following year , Congress ended the series .
+											<br>
+											<br>
+											It is very convenient as it cover lot of differents subjects, alowing us to train from a wide range of words embeddings.
+										</p>
+
+									</p>
+									<h4>b) Data preprocessing</h4>
+									<p class="text-justify">
+										I remove the title for each article as I want my model to understant complex sentences. I also clean my dataset,remplacing some special caracters plus some HTML tag to specific tokkens.
+										From this cleaned dataset, I creating my 1_gram word embedding. I built my vocabulary, ranking each words by his probability to appear in a given sentence, and tooking the 30 000 more commons words.
+										Note that it whould have been better to built a vocabulary on each 230 000 different words on this dataset, but it is not possible for memory reason (embeddin matrix is vocab_size by num_token).
+										I also added 2 words to my vocab, respectively "unk" for unknown tokken, and "_pad_" for padding.
+										<br>
+										<br>
+									</p>
+
+									<h4>c) Slanted triangular learning rates</h4>
+									<p class="text-justify">
+										To train, we increase our learning rate at the beginning of the training to make model  to  quickly  converge  to  a  suitable region  of  the  parameter  space
+										and then refine its parameter using a lineary decreasing learning rate.
+										<br>
+										<br>
+										<img src="images/trianguar_lr.png" alt="Free HTML5 Website Template by FreeHTML5.co" class="img-responsive">
+										<br>
+										<br>
+									</p>
+
+								</p>
+								<h4>d) Training</h4>
+								<p class="text-justify">
+									I trained my model on a GTX-1080TI GPU.
+									I used the same parameters used in the paper (ULMFT):<br><br>
+									initial lr=0.001<br>
+									batch_size = 64<br>
+									Adam optimizer(B1=0.9, B2=0.999)<br>
+									BPTT    = 70 in average, 95% of the time.<br>
+									dropout =
+									As in the paper, I set BPTT to have length defined by a gaussian distribution centred in 70 95% of the time, on centred around 35 the rest of the time.<br>
+									These variations on BPTT allow the model to train on differents batches for two different epochs, leading to better overall result.<br>
+									<br>
+									<br>
+								</p>
+
+							</div>
+						</a>
+					</div>
+				</div>
+
+				<div class="gototop js-top">
+					<a href="#" class="js-gotop"><i class="icon-arrow-up"></i></a>
+				</div>
+
+				<!-- jQuery -->
+				<script src="js/jquery.min.js"></script>
+				<!-- jQuery Easing -->
+				<script src="js/jquery.easing.1.3.js"></script>
+				<!-- Bootstrap -->
+				<script src="js/bootstrap.min.js"></script>
+				<!-- Waypoints -->
+				<script src="js/jquery.waypoints.min.js"></script>
+				<!-- countTo -->
+				<script src="js/jquery.countTo.js"></script>
+				<!-- Magnific Popup -->
+				<script src="js/jquery.magnific-popup.min.js"></script>
+				<script src="js/magnific-popup-options.js"></script>
+				<!-- Main -->
+				<script src="js/main.js"></script>
+
+			</body>
+			</html>
