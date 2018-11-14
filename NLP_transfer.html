@@ -88,7 +88,7 @@
 					<div class="col-md-12 col-md-offset-0 text-center">
 						<div class="display-t">
 							<div class="display-tc animate-box" data-animate-effect="fadeInUp">
-								<h1 class="mb30">Transfer learning in natual language processing (NLP)</h1>
+								<h1 class="mb30">Transfer learning in natural language processing (NLP)</h1>
 								<p>A new state of the art for text classification (April 2018)</p>
 							</div>
 						</div>
@@ -103,95 +103,97 @@
 					<div class="col-md-8 col-md-offset-2 text-center fh5co-heading">
 						<span>Introduction</span>
 						<h2>A new state of the art:</h2>
-						<p>Transfer learning is definitly a new concept for NLP, and it should be done with caution.
-							In this blog post, we will investigate on the theorie behind it, and then we will pretrain our own model from the wiki103 dataset</p>
+						<p>Transfer learning is definitely a new concept for NLP, and it should be done with caution.
+							In this blog post, we will investigate on the theory behind it, and then we will pre-train our own model from the wiki103 dataset
+							</p>
 						</div>
 					</div>
 					<div class="row row-pb-md animate-box">
 						<div class="col-md-8 col-md-offset-2 text-center-block fh5co-heading">
 							<h3>General overview</h3>
 							<p class="text-justify">
-
-								Transfer Learning is a technique widely used in computer vision.
-								It constists in using a pretrained neural network on
-								a similar task, and then training the last layers on our final task.
-								For instance, we can use a convolutional neural network (Network A) trained to classify 1000
-								different types of images (cat, iris, aircraft, vehicules,...) and transfer some of his parameters to a network B
-								before we train B on a more specific task, such as iceberg recognition.
+								Transfer Learning is a technique widely used in computer vision. It consists in using a pre-trained neural network
+								on a similar task, and then training the last layers on our final task. For instance, we can use a convolutional
+								neural network (Network A) trained to classify 1000 different types of images (cat, iris, aircraft, vehicles,...)
+								and transfer some of his parameters to a network B before we train B on a more specific task, such as iceberg recognition.
 
 								<a href="NLP_transfer.html"><img src="images/transfer.png" alt="Free HTML5 Website Template by FreeHTML5.co" class="img-responsive"></a>
 
 								<br>This technique makes a lot of sense:
-								even if the last layers are different from network A to network B,
-								it would be very useful for our network B to reuse
-								the first layers of network A to capture low level features
-								such as edges and basic shapes. We can keep the first layers of our network A
-								and train only the last fully connected layers in B, or even better: use different
-								learning rate for every group of layer (Jeremy Howard, fastai).
+								This technique makes a lot of sense: even if the last layers are different from
+								network A to network B, it would be very useful for our network B to reuse the first
+								layers of network A to capture low-level features such as edges and basic shapes.
+								 We can keep the first layers of our network A and train only the last fully connected
+								 layers in B, or even better: use different learning-rates for every group of layer (Jeremy Howard, fastai).
+
 								<br>
-								So why don't researchers use to do the same with NLP models?
-								Bryan McCann,James Bradbury,Caiming Xiong and Richard Socher tried to use a pretrain
-								translations model in <a href="https://arxiv.org/pdf/1708.00107.pdf"> this paper:</a>
-								Hower, they didn't fine tune their model (unfreezing and using differents lr per group of parameters).
+								So why don't researchers usually do the same with NLP models? Bryan McCann,James Bradbury,
+								Caiming Xiong and Richard Socher tried to use a pre-train translation model in <a href="https://arxiv.org/pdf/1708.00107.pdf"> this paper:</a>:
+								However, they didn't fine-tune their model (unfreezing and using different learning rates per group of parameters).
 								<br>
 								<br></p>
-								<h3>Unified language model fine tuning </h3>
+								<h3>Unified language model fine-tuning </h3>
 								<p class="text-justify">
+
 									I will base my work on <a href="https://arxiv.org/pdf/1801.06146.pdf"> this amazing paper</a>, by Jeremy Howard and Sebastian Ruder.
-									Both are great researchers, Jeremy made some very good machine learning courses on
-									<a href="https://www.fast.ai/"> fastai.</a> Sebastian Ruder study NLP
-									and <a href="http://ruder.io/"> his website </a> is very good to have an overview on NLP and deep learning in general.
-									Make sure to check it out if you are interested by these subjects. <br>
+									Both are great researchers, Jeremy made some very good machine learning courses on<a href="https://www.fast.ai/"> fastai.</a> .
+									Sebastian Ruder study NLP and <a href="http://ruder.io/"> his website </a> is very good as an overview on NLP and deep learning in general.
+									Make sure to check it out if you are interested by these subjects.<br>
 									Transfer learning in NLP is more complex than in computer vision as we have to care about our embeddings and how do we train our network on a new dataset.
-									We can split this task in 3 steeps: <br><br>
-									- Pretraining a languag model (AWD_LSTM) model in a huge dataset such as wiki103 dataset (a).</br>
-									- Pretraining our previously pretrain model in our target dataset (b) <br>
-									- Training in our pretrain model on out target dataset and our target task (ie classification,..) (c) <br>
+									We can split this task in 3 steps:<br><br>
+									- Pre-training a language model (AWD_LSTM) in a huge dataset such as wiki103 dataset (a).<br>
+									-              Pre-training our previously pre-trained model in our target dataset (b)<br>
+									- Training in our pre-trained model on our target dataset and our target task (ie classification,..) (c) <br>
 									<br>
+
+
 
 									<a href="NLP_transfer.html"><img src="images/figA.png" alt="Free HTML5 Website Template by FreeHTML5.co" class="img-responsive"></a>
 								</p>
-								<br>On this blog post, I will implement the first part of this paper, pretraining a AWD_LSTM model in a huge dataset such as wiki103 dataset <br><br>
-								<h3>Language model pretraining </h3>
+								<br>On this blog post, I will implement the first part of this paper, pre-training a AWD_LSTM model in a huge dataset such as wiki103 dataset.<br><br>
+								<h3>Language model pre-training </h3>
 								<h4>a) Our Language Model</h4>
+								We will use a 3 layers AWD-LSTM Network as described in <a href="https://arxiv.org/pdf/1708.00107.pdf"> this paper </a>..
+								AWD-LSTM give good results when they are well used thanks to their regularization in the weight
+								matrix itself (DropConnect). We will also use the same dropout mask within a forward pass (Variational dropout).
+								In a first time, I will not use any regularization on the hidden states (Activation Regularization or
+								Temporal Activation Regularization). We will use a linear layer at the top of our LSTM on which
+								we will use a softmax layer in order to predict the next word index. Our embedding layer will be a
+								vocab_size by word_embedding_size embedding matrix, and we will share the weights between the embedding
+								and softmax layer, substantially reducing the total parameters count in the model (<a href="https://arxiv.org/pdf/1608.05859.pdf"> Weight tying (Press & Wolf 2016) </a> )
 
-								We will use a 3 layers AWD-LSTM Network described in <a href="https://arxiv.org/pdf/1708.00107.pdf"> this paper </a>. AWD-LSTM give good results
-								when they are well used thanks to their regularisation in the weight matrix itself (DropConnect).
-								We will also use the same dropout mask within a forward pass (Variational dropout).
-								In a first time, I will not use any regularisation on the hidden states (Activation Regularization or Temporal Activation Regularization).
-								We will use a linear layer at the top of our LSTM on which we will use a softmax layer in order to predict the next word indice.
-								Our embedding layer will be a vocab_size by word_embedding size embedding matrix, and we will share the weights between the embedding and softmax layer,
-								substantially reducing the total parameter count in the model ( <a href="https://arxiv.org/pdf/1608.05859.pdf"> Weight tying (Press & Wolf 2016) </a>)
 								<br>
 								<br>
-								<h4>b) How to pretrain our model ?</h4>
+								<h4>b) How to pre-train our model ?</h4>
 								<p class="text-justify">
-									So, what do I mean when I say pretraining? What we want to do is to learn the general structure of our language.
-									For instance, it is more likely that a verb follows a name than a second verb.
-									We will also learn our embedding from scratch, using a 400 dimentions vector for each word.
-									To do this pretraining, we will train our language_model to predict each next word: <br>
-									Let's say I have a sentence in my corpus, "I love machine learning".
-									My first input at t=0 will be "I", and my language model will have to predict "love". At t=1, my input will be "love", and the LSTM have seen "I" before.
-									Our language model will have to predict "machine". Training our model this way, we force our model to learn dependencies between words, and this is very convenient as we dont need any labeled data as input!
-									We keep iterating this way for BPTT words.
+									So, what do I mean when I say pre-training? What we want to do is to learn the general structure of our language.
+									For instance, it is more likely that a verb follows a noun than a second verb. We will also learn our embedding
+									from scratch, using a 400 dimensions vector for each word. To do this pre-training, we will train our language_model to predict each next word: <br>
+									Let's say I have a sentence in my corpus, "I love machine learning". My first input at t=0 will be
+									"I", and my language model will have to predict "love". At t=1, my input will be "love",
+									and the LSTM have seen "I" before. Our language model will have to predict "machine". Training
+									our model this way, we force our model to learn dependencies between words, and this is very convenient
+									as we don’t need any labelled data as input! We keep iterating this way for BPTT words.
 									<br>
 									<br>
 									<h4>c) BPTT </h4>
 									<p class="text-justify">
-										BPTT stands for BackPropagation Thought Time. This is a number that will set the maximum timesteep on which we will backpropagate our gradient.
-										As always in machine learning, we will have to find out the good tradeoff:
-										A value too small will make it more difficult for our network to learn long-term depedencies, as we will to retro-propagate our gradient throught a lot of timesteeps.
-										On the other hand, a value that is too important will force our machine to store gradient for a lot of timesteep,
-										leading to more computation ans therefore a longer training time.
+										BPTT stands for BackPropagation Through Time. This is a number that will set
+										 the maximum time-step on which we will backpropagate our gradient. As always
+										 in machine learning, we will have to find out the good trade-off: A value too
+										 small will make it more difficult for our network to learn long-term dependencies,
+										 as we will not retro-propagate our gradient through a lot of time-steps. On the other hand,
+										 a value that is too important will force our machine to store gradient for a lot of
+										 time-step, leading to more computation and therefore a longer training time.
 										<p/>
 										<h3>Implementation</h3>
 										<p class="text-justify">
-											Now that we have a good understanding of our model, let's code it!<br/>
+											Now that we have a good understanding of our model, let's code it!<br>
 											All my code is available on my github account
 										</p>
 										<h4>a) Wikitext103 dataset</h4>
 										<p class="text-justify">
-											Wikitext103 is a 28,475 wikipedia articles dataset available <a href="https://einstein.ai/research/blog/the-wikitext-long-term-dependency-language-modeling-dataset">here</a>.
+											Wikitext103 is a 28,475 Wikipedia articles dataset available <a href="https://einstein.ai/research/blog/the-wikitext-long-term-dependency-language-modeling-dataset">here</a>.
 											Here is an example of one article:
 											<br>
 											<br>
@@ -202,24 +204,26 @@
 											Gold did not again circulate in most of the nation until 1879 ; once it did , the gold dollar did not regain its place . In its final years , it was struck in small numbers , causing speculation by hoarders . It was also in demand to be mounted in jewelry . The regular issue gold dollar was last struck in 1889 ; the following year , Congress ended the series .
 											<br>
 											<br>
-											It is very convenient as it cover lot of differents subjects, alowing us to train from a wide range of words embeddings.
+											 It is very convenient as it cover lot of different subjects, allowing us to train from a wide range of words embeddings.
 										</p>
 
 									</p>
-									<h4>b) Data preprocessing</h4>
+									<h4>b)Data pre-processing</h4>
 									<p class="text-justify">
-										I remove the title for each article as I want my model to understant complex sentences. I also clean my dataset,remplacing some special caracters plus some HTML tag to specific tokkens.
-										From this cleaned dataset, I creating my 1_gram word embedding. I built my vocabulary, ranking each words by his probability to appear in a given sentence, and tooking the 30 000 more common words.
-										Note that it whould have been better to built a vocabulary on each 230 000 different words on this dataset, but it is not possible for memory reason (embeddin matrix is vocab_size by num_token size).
-										I also added 2 words to my vocab, respectively "unk" for unknown tokken, and "_pad_" for padding.
+										I remove the title for each article as I want my model to understand complex sentences. I also clean my dataset, replacing some special
+										 characters plus some HTML tag to specific tokens. From this cleaned dataset, I created my 1_gram word embedding. I built my vocabulary,
+										 ranking each word by its probability to appear in a given sentence, and taking the 30 000 most common words. Note that it would have been
+										 better to build a specific embedding for each of our 230 000 different words on this dataset, but it is not possible for memory reason
+										 (embedding matrix is vocab_size by num_token size). I also added 2 words to my vocab, respectively "unk" for unknown token, and "_pad_" for padding.
 										<br>
 										<br>
 									</p>
 
 									<h4>c) Slanted triangular learning rates</h4>
 									<p class="text-justify">
-										To train, we increase our learning rate at the beginning of the training to make model  to  quickly  converge  to  a  suitable region  of  the  parameter  space
-										and then refine its parameters using a lineary decreasing learning rate.
+										To train, we increase our learning rate at the beginning of the training
+										to make the model to quickly converge to a suitable region of the parameter space and then refine
+										its parameters using a linearly decreasing learning rate.
 										<br>
 										<br>
 										<img src="images/trianguar_lr.png" alt="Free HTML5 Website Template by FreeHTML5.co" class="img-responsive">
@@ -230,25 +234,23 @@
 								</p>
 								<h4>d) Training</h4>
 								<p class="text-justify">
-									I trained my model on a GTX-1080TI GPU.
-									I used the same parameters used in the paper (ULMFT):<br><br>
-									maximal lr						=0.001<br>
-									batch_size 						= 64<br>
-									BPTT    							= 70 in average, 95% of the time.<br>
-									dropout_input_lstm 		= 0.25*0.7<br>
-									dropout_decedeur   		= 0.2<br>
-									dropout_Weight_lstm 	= 0.02*0.7<br>
-									dropout_embedding 		= 0.02*0.7<br>
-									dropout_hidden 				= 0.15*0.7<br>
+									I trained my model on a GTX-1080TI GPU. I used the same parameters used in the paper (ULMFT):<br><br>
+
+									maximal lr =0.001<br>
+									batch_size = 64<br>
+									BPTT = 70 in average, 95% of the time.<br>
+									dropout_input_LSTM = 0.25*0.7<br>
+									dropout_decoder = 0.2<br>
+									dropout_Weight_LSTM = 0.02*0.7<br>
+									dropout_embedding = 0.02*0.7<br>
+									dropout_hidden = 0.15*0.7<br>
 									Adam optimizer(B1=0.9, B2=0.999)<br>
-									validation part = 5 last percent of the articles, testing part given in the dataset
+									validation part = 5 last percent of the articles, testing part given in the dataset<br><br>
 
+									I increased linearly my learning rate for 1.5 epoch, and I decreased it for 8.5 epoch. At the end, it reached the minimal value of 0.05*0.001 for the last five epochs.<br>
+									As in the paper, I set BPTT to have length defined by a Gaussian distribution centred in 70 95% of the time, and centred around 35 the rest of the time.<br>
+									These variations on BPTT allow the model to train on different batches for two different epochs, leading to better overall results.<br>
 
-								<br>
-								<br>
-									I increased lineary my learning rate for 1.5 epoch, and I decreased it for 8.5 epoch. At the end, it reached the minimal value of 0.05*0.001 for the five last epochs. <br>
-									As in the paper, I set BPTT to have length defined by a gaussian distribution centred in 70 95% of the time, on centred around 35 the rest of the time.<br>
-									These variations on BPTT allow the model to train on differents batches for two different epochs, leading to better overall results.<br>
 									<br>
 									<br>
 								</p>
@@ -262,13 +264,13 @@
 									<img src="images/resultNLP.PNG" alt="Free HTML5 Website Template by FreeHTML5.co" class="img-responsive">
 									<img src="images/resultNLPbas.PNG" alt="Free HTML5 Website Template by FreeHTML5.co" class="img-responsive">
 									<br>
-									As we can see, I get down to a perplexity of 32.5, that is quite good. According to fastai forum, Sebastian Ruder get down to a preprexity of 30.
-									However, he was training on more thant 200 k embeddings, and not 30 k as I am doing.
-									An other interesting point is the fact that that my validation and testing loss is hightly correlated,
-									proving that my validation loss is representative of unseen articles.
-									<br>
-									I was surprised by the fact that my val loss is almost not increasing at the end of the training, as it does when a model overfits.
-									My explaination is that we are training on so much data (nearly 27 k article) that it is very difficult for the model to overfit.
+									As we can see, I get down to a perplexity of 32.5, that is quite good. According to Fastai forum, Sebastian Ruder
+									 get down to a perplexity of 30. However, he was training on more than 200 k embedding, and not 30 k as I am doing.
+									  Another interesting point is the fact that that my validation and testing loss is highly correlated, proving that
+										 my validation loss is representative of unseen articles.<br>
+									I was surprised by the fact that my validation loss is almost not increasing at the end of the training, as it does
+									when a model overfits. My explanation is that we are training on so much data (nearly 27 k article) that it is very
+									difficult for the model to overfit, plus the fact I am using “only” 30k embeddings.
 									<br><br>
 									I will now work on the second part, using this pretrain model for text classification
 									<br>
