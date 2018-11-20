@@ -1,4 +1,4 @@
-# Repository for mu website
+# Repository for my website
 
 You can use this link:
 
